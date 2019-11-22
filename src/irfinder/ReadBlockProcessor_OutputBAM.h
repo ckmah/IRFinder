@@ -57,7 +57,7 @@ class OutputBAM : public ReadBlockProcessor {
 		//bam_read_core bam[2];
 		bam_read_core bamP;
 		bam_read_core bamS;
-	
+
 		std::vector<std::string> chrID_Name;
 		std::ostream *out;
 
@@ -66,7 +66,7 @@ class OutputBAM : public ReadBlockProcessor {
 		int bufferPos = 0;
 		// Should the actual header and footer be written into this buffer too? That would allow a different thread to do the write if desired at a later stage.
 		// At present the buffer is for the data part only.
-		
+
 		uint16_t reg2bin(int beg, int end);
 		void CreateCigar(const std::vector<int> &starts, const std::vector<int> &lens,int32_t *cigar);
 		void FeedBuffer(bam_read_core &bamrec);

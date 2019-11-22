@@ -7,14 +7,14 @@ OPTIMFLAGS :=
 OPTIMFLAGS1 :=
 # below flags make little difference.
 #OPTIMFLAGS=-ffast-math
-#OPTIMFLAGS=-fforce-addr -funsafe-loop-optimizations -ftree-loop-linear -ftree-vectorize 
-#OPTIMFLAGS=-fforce-addr -funsafe-loop-optimizations -ftree-vectorize 
+#OPTIMFLAGS=-fforce-addr -funsafe-loop-optimizations -ftree-loop-linear -ftree-vectorize
+#OPTIMFLAGS=-fforce-addr -funsafe-loop-optimizations -ftree-vectorize
 # unroll-loops slows the program ~6%.
 #OPTIMFLAGS1=-funroll-loops  -fprefetch-loop-arrays
 COMPTIMEPLACE := -D'COMPILATION_TIME_PLACE="$(shell echo `date` `hostname --fqdn`:`pwd`)"'
 CCFLAGS_MAIN := -pipe -std=c++0x -O3    -Wall -Wextra -fopenmp $(COMPTIMEPLACE) $(OPTIMFLAGS) $(OPTIMFLAGS1)
 CCFLAGS_GDB := -pipe  -std=c++0x -g -O0 -Wall -Wextra -fopenmp $(COMPTIMEPLACE)
-CC :=g++ -g
+CC :=g++
 GCC:=gcc
 
 %.o : %.cpp
@@ -42,6 +42,6 @@ IRFinderStatic : $(OBJECTS)
 
 gdb : CCFLAGS= $(CCFLAGS_GDB)
 gdb : $(OBJECTS)
-	$(CC) -o irfinder $(CCFLAGS_GDB) $(OBJECTS) $(LDFLAGS_GDB) 
+	$(CC) -o irfinder $(CCFLAGS_GDB) $(OBJECTS) $(LDFLAGS_GDB)
 
 

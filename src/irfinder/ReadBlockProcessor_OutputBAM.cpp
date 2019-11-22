@@ -4,7 +4,7 @@
 
 const char OutputBAM::bamEOF[OutputBAM::bamEOFlength+1] =
 		"\x1f\x8b\x08\x04\x00\x00\x00\x00\x00\xff\x06\x00\x42\x43\x02\x00\x1b\x00\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00";
-const char OutputBAM::bamGzipHead[OutputBAM::bamGzipHeadLength+1] = 
+const char OutputBAM::bamGzipHead[OutputBAM::bamGzipHeadLength+1] =
 		"\x1f\x8b\x08\x04\x00\x00\x00\x00\x00\xff\x06\x00\x42\x43\x02\x00";
 
 
@@ -58,7 +58,7 @@ void OutputBAM::ProcessBlocks(const FragmentBlocks &fragblock) {
 			bamP.flag = 0x03 | 0x20 | 0x40;
 		}else{
 			// -
-			bamP.flag = 0x03 | 0x10 | 0x40;		
+			bamP.flag = 0x03 | 0x10 | 0x40;
 		}
 		FeedBuffer(bamP);
 
@@ -81,7 +81,7 @@ void OutputBAM::ProcessBlocks(const FragmentBlocks &fragblock) {
 			bamP.flag = 0x03 | 0x10 | 0x80;
 		}else{
 			// -
-			bamP.flag = 0x03 | 0x20 | 0x80;		
+			bamP.flag = 0x03 | 0x20 | 0x80;
 		}
 		FeedBuffer(bamP);
 
@@ -112,7 +112,7 @@ void OutputBAM::ProcessBlocks(const FragmentBlocks &fragblock) {
 			bamS.flag = 0;
 		}else{
 			// -
-			bamS.flag = 0x10;		
+			bamS.flag = 0x10;
 		}
 		FeedBuffer(bamS);
 // Dir = +
@@ -134,7 +134,7 @@ void OutputBAM::ProcessBlocks(const FragmentBlocks &fragblock) {
 	//
 	// CRC32 can be calculated as the buffer is filled (rather than at the end when we want to output -- ensures fastest possible mass output .. but if output is done on a separate thread, the checksum should be calculated there)
 	//   but algo so fast anyway no difference? / or faster just to finish the calc than be in and out of functions.
-	
+
 }
 
 void OutputBAM::FeedBuffer(bam_read_core &bamrec) {
@@ -157,9 +157,6 @@ void OutputBAM::OutputHeader(const std::string &samHeader, const std::vector<std
 	bufferPos += 4;
 	memcpy(buffer+bufferPos, myInt32.c,4);
 	bufferPos += 4;
-
-	printf("sam Header: %d\n", samHeader.length());
-
 	memcpy(buffer+bufferPos, samHeader.c_str(), samHeader.length());
 	bufferPos += samHeader.length();
 
@@ -198,10 +195,10 @@ void OutputBAM::FlushOutput(const int final) {
 	CRC32 crc;
 
 	crc.add(buffer, bufferPos);
-	
+
 	out->write(bamGzipHead, bamGzipHeadLength);
 	myInt16.i = bufferPos + bamGzipHeadLength + 15 - 1;
-	out->write(myInt16.c, 2);	
+	out->write(myInt16.c, 2);
 	out->write("\x01", 1);  //Deflate mode: no compression: binary 00. Final block: binary 1.
 	myInt16.i = bufferPos;  //Deflate length.
 	out->write(myInt16.c, 2);
@@ -216,11 +213,11 @@ void OutputBAM::FlushOutput(const int final) {
 	out->write(myInt32.c, 4);
 	//Done - that's a complete BAM gzip block with a single block of compression zero deflate within.
 
-	bufferPos = 0;	
+	bufferPos = 0;
 	//if final, then output an empty gzip record at the end (BAM EOF marker).
 
 	if (final) {
-		out->write(bamEOF, bamEOFlength);	
+		out->write(bamEOF, bamEOFlength);
 	}
 }
 

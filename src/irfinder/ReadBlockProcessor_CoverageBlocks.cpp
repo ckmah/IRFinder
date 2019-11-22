@@ -44,7 +44,7 @@ void CoverageBlocks::loadRef(std::istream &IN) {
 		lineStream.ignore( numeric_limits<streamsize>::max(), '\t' );	//BED Colour
 		getline(lineStream, myField, '\t');		//BED block count
 		i_segments = std::stoul(myField);
-		getline(lineStream, sLengths, '\t');	//Comma separated lengths.  
+		getline(lineStream, sLengths, '\t');	//Comma separated lengths.
 		lensStream.str(sLengths);
 
 		if (IN.eof()) {
@@ -67,8 +67,8 @@ void CoverageBlocks::loadRef(std::istream &IN) {
 			getline(lensStream, myField, ',');
 			i_block_end = i_block_start + std::stoul(myField);
 			BEDrec.blocks.push_back(std::make_pair( i_block_start, i_block_end ));
-			temp_segments[BEDrec.chrName].push_back(std::make_pair( i_block_start, i_block_end ) ); 
-		}		
+			temp_segments[BEDrec.chrName].push_back(std::make_pair( i_block_start, i_block_end ) );
+		}
 		BEDrecords.push_back(BEDrec);
 	}
 	// Read from file complete.
@@ -188,7 +188,7 @@ void CoverageBlocks::fillHist(std::map<uint,uint> &hist, const std::string &chrN
 double CoverageBlocks::meanFromHist(const std::map<uint,uint> &hist) const {
 	unsigned long long total = 0;
 	uint count = 0;
-	
+
 	for (auto h : hist) {
 		total += h.first * h.second;
 		count += h.second;
@@ -240,10 +240,10 @@ double CoverageBlocks::trimmedMeanFromHist(const std::map<uint,uint> &hist, uint
 		size += h.second;
 	}
 	uint skip = size * ((100 - centerPercent)/2) / 100;
-	
+
 	unsigned long long total = 0;
 	uint count = 0;
-	
+
 	for (auto h : hist) {
 		if (count + h.second > size - skip) {
 			// This bar will enter the max skip section.
@@ -294,7 +294,7 @@ int CoverageBlocks::WriteOutput(std::ostream *os) const {
 		*os << it_BED->chrName << "\t" << it_BED->start << "\t" << it_BED->end << "\t" << (it_BED->end - it_BED->start) << "\t" << histPositions << "\t" << hist.size() << "\t" << trimmedMeanFromHist(hist, 50)  << "\t" << trimmedMeanFromHist(hist, 20) << "\t" << coverageFromHist(hist) << "\t" << meanFromHist(hist) << "\t" << it_BED->direction << "\t" << it_BED->name << "\n";
 		*os << percentileFromHist(hist, 25) << "\t" << percentileFromHist(hist, 50) << "\t" << percentileFromHist(hist, 75) << "\t" << "\n";
 	}
-	
+
 	return 0;
 }
 
@@ -302,7 +302,7 @@ int CoverageBlocks::WriteOutput(std::ostream *os) const {
 int CoverageBlocksIRFinder::WriteOutput(std::ostream *os, const JunctionCount &JC, const SpansPoint &SP, int directionality) const {
 	// Custom output function - related to the IRFinder needs
         *os << "Chr\tStart\tEnd\tName\tNull\tStrand\tExcludedBases\tCoverage\tIntronDepth\tIntronDepth25Percentile\tIntronDepth50Percentile\tIntronDepth75Percentile\tExonToIntronReadsLeft\tExonToIntronReadsRight\tIntronDepthFirst50bp\tIntronDepthLast50bp\tSpliceLeft\tSpliceRight\tSpliceExact\tIRratio\tWarnings\n";
-	uint recordNumber = 0;	
+	uint recordNumber = 0;
 	for (auto BEDrec : BEDrecords) {
 		recordNumber++;
 		// if name indicates it is a Dir/Non-dir record of interest - output it.
@@ -392,7 +392,7 @@ int CoverageBlocksIRFinder::WriteOutput(std::ostream *os, const JunctionCount &J
 					SPleft = SP.lookup(BEDrec.chrName, intronStart);
 					SPright = SP.lookup(BEDrec.chrName, intronEnd);
 					*os << SPleft << "\t"
-						<< SPright << "\t";			
+						<< SPright << "\t";
 
 					hist.clear();
 					fillHist(hist, BEDrec.chrName, {{intronStart + 5, intronStart + 55}});
@@ -414,14 +414,14 @@ int CoverageBlocksIRFinder::WriteOutput(std::ostream *os, const JunctionCount &J
 				}else{
 					*os << ( intronTrimmedMean /(intronTrimmedMean + max(JCleft, JCright)) ) << "\t";
 				}
-				
-				
+
+
 				// Final column -- don't try to be tri-state. Just say if it is "not ok".
 				// Not ok due to:
 				//	- insufficient spliced depth
 				//  - insufficient exact spliced compared to in-exact spliced depth
 				//  - too much variation between depths & crossings.  ... hmm, but at low depth, high probability of this failing.
-				
+
 				// Can only make a strong exclude call on spliced depth. Describe on the tool website ways to make a call for IR def true / IR def false.
 //				if (JCexact < 10 || JCexact*1.33333333 < max(JCleft, JCright) ) {
 //					*os << "-" << "\n";
@@ -442,11 +442,11 @@ int CoverageBlocksIRFinder::WriteOutput(std::ostream *os, const JunctionCount &J
 				}else{
 					*os << "-" << "\n";
 				}
-				
+
 			}catch (const std::out_of_range& e) {
 				std::cerr << "Format error in name attribute - column 4 - of CoverageBlocks reference file. Record/line number: " << recordNumber << "\n";
 			}catch (const std::invalid_argument& e) {
-				std::cerr << "Format error in name attribute - column 4 - of CoverageBlocks reference file. Record/line number: " << recordNumber << "\n";			
+				std::cerr << "Format error in name attribute - column 4 - of CoverageBlocks reference file. Record/line number: " << recordNumber << "\n";
 			}
 		}
 	}
