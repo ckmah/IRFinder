@@ -1,0 +1,17 @@
+ReadBlockProcessor.o: ReadBlockProcessor.cpp ReadBlockProcessor.h \
+ FragmentBlocks.h includedefine.h
+FragmentBlocks.o: FragmentBlocks.cpp FragmentBlocks.h includedefine.h
+IRFinder.o: IRFinder.cpp ReadBlockProcessor.h FragmentBlocks.h \
+ includedefine.h ReadBlockProcessor_CoverageBlocks.h CoverageBlock.h \
+ ReadBlockProcessor_OutputBAM.h BAM2blocks.h
+crc32.o: crc32.cpp crc32.h
+ReadBlockProcessor_OutputBAM.o: ReadBlockProcessor_OutputBAM.cpp \
+ ReadBlockProcessor_OutputBAM.h ReadBlockProcessor.h FragmentBlocks.h \
+ includedefine.h crc32.h
+CoverageBlock.o: CoverageBlock.cpp CoverageBlock.h includedefine.h
+ReadBlockProcessor_CoverageBlocks.o: \
+ ReadBlockProcessor_CoverageBlocks.cpp \
+ ReadBlockProcessor_CoverageBlocks.h CoverageBlock.h includedefine.h \
+ ReadBlockProcessor.h FragmentBlocks.h
+BAM2blocks.o: BAM2blocks.cpp BAM2blocks.h FragmentBlocks.h \
+ includedefine.h
